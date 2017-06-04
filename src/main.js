@@ -9,8 +9,19 @@ Vue.filter(
   (price) => '$' + (+price).toFixed(2)
 );
 
+Vue.directive(
+  "style-when-broken", function (el) {
+    el.classList.remove("broken-image");
+    if (!el.onerror) {
+      el.onerror = () => {
+        el.classList.add("broken-image");
+      };
+    }
+  }
+);
+
 window.app = new Vue({
   el: '#app',
   template: '<App ref="app"/>',
-  components: { App }
+  components: {App}
 });
