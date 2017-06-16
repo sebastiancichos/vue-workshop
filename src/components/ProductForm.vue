@@ -1,5 +1,5 @@
 <template>
-  <form action="#" class="box product-edit">
+  <form action="#" @submit.prevent="saveProduct" class="box product-edit">
     <template v-if="isLoading">
       <div class="spinner"></div>
     </template>
@@ -9,6 +9,10 @@
     </template>
     <template v-else>
       <h2>Edit product</h2>
+
+      <p v-if="saveError">
+        <span class="lozenge">ERROR</span> Could not save the product.
+      </p>
 
       <div class="form-row">
         <label for="edit-name">Name</label>
@@ -87,7 +91,7 @@
         <input type="number" v-model.number="price" @input="$v.price.$touch()" id="edit-price"/>
       </div>
 
-      <button :disabled="$v.$invalid" class="btn">Save product</button>
+      <button :disabled="$v.$invalid" type="submit" class="btn">Save product</button>
       <span v-show="$v.$invalid" class="lozenge">All fields are required</span>
     </template>
   </form>
@@ -95,7 +99,7 @@
 
 <script>
   import {required, numeric} from 'vuelidate/lib/validators'
-  import {getProductById} from '../productService';
+  import {getProductById, updateProduct} from '../productService';
 
   export default {
     props: {
@@ -105,6 +109,7 @@
       return {
         isLoading: false,
         isError: false,
+        saveError: false,
         name: "",
         description: "",
         photo: "",
@@ -146,6 +151,26 @@
           this.product = {};
           this.isLoading = false;
           this.isError = true;
+        }
+      },
+      saveProduct() {
+        if (!this.$v.$invalid) {
+          this.isLoading = true;
+          this.saveError = false;
+          updateProduct({
+            id: this.id,
+            name: this.name,
+            description: this.description,
+            photo: this.photo,
+            color: this.color,
+            materials: this.materials,
+            department: this.department,
+            inStock: this.inStock,
+            price: this.price
+          })
+            .then(() => this.$router.push("/product/" + this.id))
+            .catch(() => this.saveError = true)
+            .then(() => this.isLoading = false);
         }
       }
     },
