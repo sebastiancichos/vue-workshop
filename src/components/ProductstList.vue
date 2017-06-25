@@ -25,9 +25,6 @@
   import ProductListItem from "./ProductsListItem";
 
   export default {
-    props: {
-      page: Number
-    },
     data() {
       return {
         isLoading: true
@@ -43,6 +40,9 @@
       isLastPage() {
         return this.products.length === 0;
       },
+      ...mapGetters({
+        page: "currentPageNumber"
+      }),
       ...mapGetters([
         "products"
       ]),
