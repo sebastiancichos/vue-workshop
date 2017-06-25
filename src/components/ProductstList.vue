@@ -20,6 +20,7 @@
 </template>
 
 <script>
+  import {mapActions, mapGetters} from 'vuex';
   import {getAllProducts} from '../productService';
   import ProductListItem from "./ProductsListItem";
 
@@ -29,7 +30,6 @@
     },
     data() {
       return {
-        products: [],
         isLoading: true
       }
     },
@@ -42,16 +42,20 @@
       },
       isLastPage() {
         return this.products.length === 0;
-      }
+      },
+      ...mapGetters([
+        "products"
+      ]),
     },
     methods: {
       reloadProducts() {
         this.isLoading = true;
         getAllProducts(this.page)
-          .then((data) => this.products = data)
+          .then((data) => this.updateProducts(data))
           .catch((e) => console.error("Error fetching products, this should never happen :D", e))
           .then(() => this.isLoading = false);
-      }
+      },
+      ...mapActions(["updateProducts"])
     },
     watch: {
       page() {

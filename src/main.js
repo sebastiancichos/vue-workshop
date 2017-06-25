@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router';
 import Vuelidate from 'vuelidate';
 
-import App from './App'
+import store from './store';
+import App from './App';
 import ProductsList from './components/ProductstList';
 import ProductDetails from './components/ProductDetails';
 import ProductForm from './components/ProductForm';
@@ -53,5 +54,6 @@ window.app = new Vue({
   el: '#app',
   template: '<App ref="app"/>',
   components: {App},
-  router
+  router,
+  store
 });
