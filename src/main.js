@@ -38,9 +38,8 @@ const router = new VueRouter({
       component: ProductsList
     },
     {
-      path: '/product/:id',
+      path: '/product/:productId',
       component: ProductDetails,
-      props: idAsNumber
     },
     {
       path: '/product/:id/edit',
