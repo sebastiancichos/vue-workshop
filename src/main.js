@@ -4,6 +4,8 @@ import Vuelidate from 'vuelidate';
 
 import App from './App'
 import ProductsList from './components/ProductstList';
+import ProductDetails from './components/ProductDetails';
+import ProductForm from './components/ProductForm';
 
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
@@ -25,9 +27,24 @@ Vue.directive(
   }
 );
 
+const idAsNumber = (r) => ({ id: +r.params.id });
+
 const router = new VueRouter({
   routes: [
-    { path: '/', component: ProductsList },
+    {
+      path: '/',
+      component: ProductsList
+    },
+    {
+      path: '/product/:id',
+      component: ProductDetails,
+      props: idAsNumber
+    },
+    {
+      path: '/product/:id/edit',
+      component: ProductForm,
+      props: idAsNumber
+    }
   ]
 });
 
