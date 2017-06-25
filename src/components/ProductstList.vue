@@ -1,21 +1,25 @@
 <template>
   <div>
-    <p v-show="!isLoading && !(isFirstPage && isLastPage)">
+    <p v-show="!productsStatus.loading && !(isFirstPage && isLastPage)">
       <router-link :to="{ path: '/', query: { page: page - 1 } }" v-show="!isFirstPage" class="btn">Previous page</router-link>
       {{ page }}
       <router-link :to="{ path: '/', query: { page: page + 1 } }" v-show="!isLastPage" class="btn">Next page</router-link>
     </p>
-
-    <div v-show="isLoading" class="spinner"></div>
-    <section v-show="!isLoading">
-      <ul v-if="products.length" class="product-list">
-        <product-list-item
-          v-for="product in products"
-          :key="product.id"
-          :product="product"/>
-      </ul>
-      <p v-else>No products to be shown. Try a different page.</p>
-    </section>
+    <template v-if="productsStatus.error">
+      Error fetching products. Refresh the page to try again.
+    </template>
+    <template v-else>
+      <div v-show="productsStatus.loading" class="spinner"></div>
+      <section v-show="!productsStatus.loading">
+        <ul v-if="products.length" class="product-list">
+          <product-list-item
+            v-for="product in products"
+            :key="product.id"
+            :product="product" />
+        </ul>
+        <p v-else>No products to be shown. Try a different page.</p>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -25,13 +29,8 @@
   import ProductListItem from "./ProductsListItem";
 
   export default {
-    data() {
-      return {
-        isLoading: true
-      }
-    },
     mounted() {
-      this.reloadProducts();
+      this.fetchProducts();
     },
     computed: {
       isFirstPage() {
@@ -44,22 +43,16 @@
         page: "currentPageNumber"
       }),
       ...mapGetters([
-        "products"
-      ]),
+        "products",
+        "productsStatus"
+      ])
     },
     methods: {
-      reloadProducts() {
-        this.isLoading = true;
-        getAllProducts(this.page)
-          .then((data) => this.updateProducts(data))
-          .catch((e) => console.error("Error fetching products, this should never happen :D", e))
-          .then(() => this.isLoading = false);
-      },
-      ...mapActions(["updateProducts"])
+      ...mapActions(["fetchProducts"])
     },
     watch: {
       page() {
-        this.reloadProducts();
+        this.fetchProducts();
       }
     },
     components: {
