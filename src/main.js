@@ -1,50 +1,18 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router';
 import Vuelidate from 'vuelidate';
 import { sync } from 'vuex-router-sync';
 
+import styleWhenBroken from './directives/styleWhenBroken';
+import asCurrency from './filters/asCurrency';
 import store from './store';
+import router from './router';
 import App from './App';
-import ProductsList from './components/ProductstList';
-import ProductDetails from './components/ProductDetails';
-import ProductForm from './components/ProductForm';
 
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
-Vue.use(VueRouter);
 
-Vue.filter(
-  "asCurrency",
-  (price) => '$' + (+price).toFixed(2)
-);
-
-Vue.directive(
-  "style-when-broken", function (el) {
-    el.classList.remove("broken-image");
-    if (!el.onerror) {
-      el.onerror = () => {
-        el.classList.add("broken-image");
-      };
-    }
-  }
-);
-
-const router = new VueRouter({
-  routes: [
-    {
-      path: '/',
-      component: ProductsList
-    },
-    {
-      path: '/product/:productId',
-      component: ProductDetails,
-    },
-    {
-      path: '/product/:productId/edit',
-      component: ProductForm,
-    }
-  ]
-});
+Vue.filter("asCurrency", asCurrency);
+Vue.directive("style-when-broken", styleWhenBroken);
 
 sync(store, router);
 
