@@ -29,8 +29,6 @@ Vue.directive(
   }
 );
 
-const idAsNumber = (r) => ({ id: +r.params.id });
-
 const router = new VueRouter({
   routes: [
     {
@@ -42,9 +40,8 @@ const router = new VueRouter({
       component: ProductDetails,
     },
     {
-      path: '/product/:id/edit',
+      path: '/product/:productId/edit',
       component: ProductForm,
-      props: idAsNumber
     }
   ]
 });
