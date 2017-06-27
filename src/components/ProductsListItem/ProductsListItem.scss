@@ -1,0 +1,19 @@
+// Normally we would collocate this file in one folder with ProductsListItem.
+@import "../../assets/style";
+
+.product-list--product {
+  @extend .box;
+  display: flex;
+  flex-direction: column;
+  margin-left: $gutter;
+
+  &--description {
+    font-size: asRem(14px);
+  }
+
+  &--caption {
+    flex: 1 1 auto;
+  }
+
+  @include productCommons();
+}

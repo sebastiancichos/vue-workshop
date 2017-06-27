@@ -26,7 +26,7 @@
 <script>
   import {mapActions, mapGetters} from 'vuex';
   import {getAllProducts} from '../productService';
-  import ProductListItem from "./ProductsListItem";
+  import ProductListItem from "./ProductsListItem/ProductsListItem";
 
   export default {
     mounted() {
