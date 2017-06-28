@@ -8,12 +8,12 @@
       </router-link>
     </p>
 
-    <template v-if="isError">
+    <template v-if="status.error">
       <span class="lozenge">ERROR</span> Sorry, could not load the products. Try a different page.
     </template>
     <template v-else>
-      <div v-show="isLoading" class="spinner"></div>
-      <section v-show="!isLoading">
+      <div v-show="status.loading" class="spinner"></div>
+      <section v-show="!status.loading">
         <ul class="product-list">
           <product-list-item
             v-for="product in products"
@@ -31,37 +31,22 @@
   import ProductListItem from "./ProductsListItem";
 
   export default {
-    data() {
-      return {
-        isLoading: true
-      }
-    },
     created() {
-      this.reloadProducts();
+      this.fetchCurrentPageProducts();
     },
     methods: {
-      ...mapActions(["updateProducts"]),
-      reloadProducts() {
-        this.isLoading = true;
-        this.isError = false;
-        getAllProducts(this.page)
-          .then(this.updateProducts)
-          .catch(() => {
-            this.products = [];
-            this.isError = true
-          })
-          .then(() => this.isLoading = false);
-      }
+      ...mapActions(["updateProducts", "fetchCurrentPageProducts"])
     },
     computed: {
       ...mapGetters(["products"]),
       ...mapGetters({
-        page: "currentPageNumber"
+        page: "currentPageNumber",
+        status: "productsStatus"
       })
     },
     watch: {
       page() {
-        this.reloadProducts();
+        this.fetchCurrentPageProducts();
       }
     },
     components: {
