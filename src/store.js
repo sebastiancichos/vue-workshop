@@ -4,6 +4,9 @@ import {getAllProducts} from '/src/productService';
 
 Vue.use(Vuex);
 
+const UPDATE_PRODUCTS = "updateProducts";
+const UPDATE_PRODUCTS_STATUS = "updateProductsStatus";
+
 export default new Vuex.Store({
   state: {
     products: [],
@@ -15,22 +18,22 @@ export default new Vuex.Store({
     productsStatus: (state, getters, rootState) => state.productsStatus
   },
   actions: {
-    updateProducts ({ commit }, products) {
-      commit('updateProducts', products);
+    [UPDATE_PRODUCTS] ({ commit }, products) {
+      commit(UPDATE_PRODUCTS, products);
     },
     fetchCurrentPageProducts({ dispatch, getters, commit } ) {
-      commit("updateProductsStatus", {loading: true});
+      commit(UPDATE_PRODUCTS_STATUS, {loading: true});
       getAllProducts(getters.currentPageNumber)
-        .then((p) => dispatch("updateProducts", p))
-        .catch(() => commit("updateProductsStatus", {error: true}))
-        .then(() => commit("updateProductsStatus", {loading: false}));
+        .then((p) => dispatch(UPDATE_PRODUCTS, p))
+        .catch(() => commit(UPDATE_PRODUCTS_STATUS, {error: true}))
+        .then(() => commit(UPDATE_PRODUCTS_STATUS, {loading: false}));
     }
   },
   mutations: {
-    updateProducts(state, newProducts) {
+    [UPDATE_PRODUCTS](state, newProducts) {
       state.products = newProducts;
     },
-    updateProductsStatus(state, newStatus) {
+    [UPDATE_PRODUCTS_STATUS](state, newStatus) {
       state.productsStatus = newStatus;
     }
   }
