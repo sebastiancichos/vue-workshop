@@ -26,6 +26,7 @@
 </template>
 
 <script>
+  import {mapActions, mapGetters} from 'vuex';
   import {getAllProducts} from '/src/productService';
   import ProductListItem from "./ProductsListItem";
 
@@ -33,7 +34,6 @@
     props: ["page"],
     data() {
       return {
-        products: [],
         isLoading: true
       }
     },
@@ -41,11 +41,12 @@
       this.reloadProducts();
     },
     methods: {
+      ...mapActions(["updateProducts"]),
       reloadProducts() {
         this.isLoading = true;
         this.isError = false;
         getAllProducts(this.page)
-          .then((data) => this.products = data)
+          .then(this.updateProducts)
           .catch(() => {
             this.products = [];
             this.isError = true
@@ -54,9 +55,7 @@
       }
     },
     computed: {
-      product() {
-        return (this.products.length > 0) ? this.products[0] : {};
-      }
+      ...mapGetters(["products"])
     },
     watch: {
       page() {
