@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import Vuelidate from 'vuelidate';
-Vue.use(Vuelidate);
-
+import VueRouter from 'vue-router';
 import App from './App'
+import ProductsList from './components/ProductstList';
+
+Vue.use(Vuelidate);
+Vue.use(VueRouter);
 
 Vue.config.productionTip = false;
 
@@ -23,8 +26,15 @@ Vue.directive(
   }
 );
 
+const router = new VueRouter({
+  routes: [
+    { path: "/", component: ProductsList }
+  ]
+});
+
 window.app = new Vue({
   el: '#app',
   template: '<App ref="app"/>',
-  components: {App}
+  components: {App},
+  router
 });

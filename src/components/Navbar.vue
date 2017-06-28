@@ -1,11 +1,11 @@
 <template>
     <nav class="navbar container">
-      <a class="navbar--brand"
-         href="#"
+      <router-link class="navbar--brand"
+         to="/"
          :title="appName"
       >
         {{ appName }}
-      </a>
+      </router-link>
       <ul class="navbar--menu">
         <li class="active"><a href="#">Somewhere</a></li>
         <li class="active"><a href="#">Over</a></li>

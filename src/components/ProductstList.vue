@@ -1,9 +1,9 @@
 <template>
   <div>
     <p>
-      <a class="btn" href="#less" @click.prevent="$emit('previous')">Previous page</a>
-      {{ currentPage }}
-      <a class="btn" href="#more" @click.prevent="$emit('next')">Next page</a>
+      <a class="btn" href="#less" @click.prevent="onClickPrevious">Previous page</a>
+      {{ page }}
+      <a class="btn" href="#more" @click.prevent="onClickNext">Next page</a>
     </p>
 
     <div v-show="isLoading" class="spinner"></div>
@@ -19,16 +19,46 @@
 </template>
 
 <script>
+  import {getAllProducts} from '/src/productService';
   import ProductListItem from "./ProductsListItem";
 
   export default {
-    props: {
-      currentPage: {
-        type: Number,
-        default: 0
+    data() {
+      return {
+        page: 1,
+        products: [],
+        isLoading: true
+      }
+    },
+    created() {
+      this.reloadProducts();
+    },
+    methods: {
+      onClickNext() {
+        this.page = this.page + 1;
       },
-      isLoading: Boolean,
-      products: Array
+      onClickPrevious() {
+        if (this.page > 0) {
+          this.page = this.page - 1;
+        }
+      },
+      reloadProducts() {
+        this.isLoading = true;
+        getAllProducts(this.page)
+          .then((data) => this.products = data)
+          .catch(() => console.log("Error fetching products, this should never happen :D"))
+          .then(() => this.isLoading = false);
+      }
+    },
+    computed: {
+      product() {
+        return (this.products.length > 0) ? this.products[0] : {};
+      }
+    },
+    watch: {
+      page() {
+        this.reloadProducts();
+      }
     },
     components: {
       ProductListItem
