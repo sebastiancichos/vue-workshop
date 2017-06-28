@@ -31,7 +31,6 @@
   import ProductListItem from "./ProductsListItem";
 
   export default {
-    props: ["page"],
     data() {
       return {
         isLoading: true
@@ -55,7 +54,10 @@
       }
     },
     computed: {
-      ...mapGetters(["products"])
+      ...mapGetters(["products"]),
+      ...mapGetters({
+        page: "currentPageNumber"
+      })
     },
     watch: {
       page() {

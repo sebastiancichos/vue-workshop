@@ -6,12 +6,12 @@ import ProductsList from './components/ProductstList';
 import ProductDetails from './components/ProductDetails.vue';
 import ProductForm from './components/ProductForm.vue';
 import store from './store';
+import { sync } from 'vuex-router-sync';
 
 Vue.use(Vuelidate);
 Vue.use(VueRouter);
 
 Vue.config.productionTip = false;
-
 
 Vue.filter(
   "asCurrency",
@@ -32,11 +32,13 @@ Vue.directive(
 const withId = (r) =>  ({ id: +r.params.id });
 const router = new VueRouter({
   routes: [
-    { path: "/", component: ProductsList, props: (r) => ({ page: +r.query.page || 1 }) },
+    { path: "/", component: ProductsList },
     { path: "/product/:id", component: ProductDetails, props: withId },
     { path: "/product/:id/edit", component: ProductForm, props: withId },
   ]
 });
+
+sync(store, router);
 
 window.app = new Vue({
   el: '#app',
