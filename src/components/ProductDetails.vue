@@ -37,20 +37,46 @@
     </div>
     <div class="product--footer">
       <div class="product--actions">
-        <a class="btn" href="#">Edit product</a>
+        <router-link class="btn" :to="`/product/${product.id}/edit`">Edit product</router-link>
       </div>
     </div>
   </article>
 </template>
 
 <script>
+  import { getProductById } from '../productService';
+
   export default {
     props: {
-      product: {
-        type: Object,
-        default() {
-          return {};
-        }
+      id:{
+        type: Number,
+        required: true
+      },
+    },
+    data() {
+      return {
+        product: {},
+        isLoading: false,
+        isError: false
+      }
+    },
+    created() {
+      this.fetchProduct();
+    },
+    methods: {
+      fetchProduct() {
+        this.isLoading = true;
+        this.isError = false;
+
+        getProductById(this.id)
+          .then(p => this.product = p)
+          .catch(e => this.isError = true)
+          .then(() => this.isLoading = false);
+      }
+    },
+    watch: {
+      id() {
+        this.fetchProduct();
       }
     },
     computed: {

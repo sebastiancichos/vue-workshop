@@ -86,38 +86,55 @@
 
 <script>
   import {required, numeric} from 'vuelidate/lib/validators';
+  import { getProductById } from '../productService';
 
   export default {
     props: {
-      product: {
-        type: Object,
-        default() {
-          return {};
-        }
+      id: {
+        type: Number,
+        required: true
       }
     },
     data() {
       return {
-        name: this.product.name || "",
-        description: this.product.description || "",
-        photo: this.product.photo || "",
-        color: this.product.color || "#ffffff",
-        materials: this.product.materials || [],
-        department: this.product.department || "",
-        inStock: this.product.inStock || 0,
-        price: this.product.price || 0,
+        isError: false,
+        isLoading: true,
+        name: "",
+        description: "",
+        photo: "",
+        color: "#ffffff",
+        materials: [],
+        department: "",
+        inStock: 0,
+        price: 0,
       }
     },
+    created() {
+      this.fetchProduct();
+    },
     watch: {
-      product(p) {
-        this.name = p.name || "";
-        this.description = p.description || "";
-        this.photo = p.photo || "";
-        this.color = p.color || "#ffffff";
-        this.materials = p.materials || [];
-        this.department = p.department || "";
-        this.inStock = p.inStock || 0;
-        this.price = p.price || 0;
+      id() {
+        this.fetchProduct();
+      }
+    },
+    methods: {
+      fetchProduct() {
+        this.isError = false;
+        this.isLoading = true;
+
+        getProductById(this.id)
+          .then((p) => {
+            this.name = p.name || "";
+            this.description = p.description || "";
+            this.photo = p.photo || "";
+            this.color = p.color || "#ffffff";
+            this.materials = p.materials || [];
+            this.department = p.department || "";
+            this.inStock = p.inStock || 0;
+            this.price = p.price || 0;
+          })
+          .catch(() => this.isError = true)
+          .then(() => this.isLoading = false);
       }
     },
     validations: {
