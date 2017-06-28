@@ -1,20 +1,27 @@
 <template>
   <div>
     <p>
-      <a class="btn" href="#less" @click.prevent="onClickPrevious">Previous page</a>
+      <router-link class="btn" :to="{ path: '/', query: { page: page - 1 } }" v-show="page > 1">Previous page
+      </router-link>
       {{ page }}
-      <a class="btn" href="#more" @click.prevent="onClickNext">Next page</a>
+      <router-link class="btn" :to="{ path: '/', query: { page: page + 1 } }" v-show="products.length > 0">Next page
+      </router-link>
     </p>
 
-    <div v-show="isLoading" class="spinner"></div>
-    <section v-show="!isLoading">
-      <ul class="product-list">
-        <product-list-item
-          v-for="product in products"
-          :key="product.id"
-          :product="product"/>
-      </ul>
-    </section>
+    <template v-if="isError">
+      <span class="lozenge">ERROR</span> Sorry, could not load the products. Try a different page.
+    </template>
+    <template v-else>
+      <div v-show="isLoading" class="spinner"></div>
+      <section v-show="!isLoading">
+        <ul class="product-list">
+          <product-list-item
+            v-for="product in products"
+            :key="product.id"
+            :product="product"/>
+        </ul>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -23,9 +30,9 @@
   import ProductListItem from "./ProductsListItem";
 
   export default {
+    props: ["page"],
     data() {
       return {
-        page: 1,
         products: [],
         isLoading: true
       }
@@ -34,19 +41,15 @@
       this.reloadProducts();
     },
     methods: {
-      onClickNext() {
-        this.page = this.page + 1;
-      },
-      onClickPrevious() {
-        if (this.page > 0) {
-          this.page = this.page - 1;
-        }
-      },
       reloadProducts() {
         this.isLoading = true;
+        this.isError = false;
         getAllProducts(this.page)
           .then((data) => this.products = data)
-          .catch(() => console.log("Error fetching products, this should never happen :D"))
+          .catch(() => {
+            this.products = [];
+            this.isError = true
+          })
           .then(() => this.isLoading = false);
       }
     },
