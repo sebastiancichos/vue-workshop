@@ -1,6 +1,11 @@
 <template>
-  <form action="#" class="box product-edit">
+  <form action="#" @submit.prevent="saveProduct" class="box product-edit">
     <h2>Edit product</h2>
+
+    <div v-show="saveError">
+      <span class="lozenge">ERROR</span>
+      Error saving form: {{ saveError }}.
+    </div>
 
     <div class="form-row">
       <label for="edit-name">Name</label>
@@ -79,14 +84,14 @@
       <input type="number" v-model.number="price" @input="$v.price.$touch()" id="edit-price"/>
     </div>
 
-    <button class="btn" :disabled="$v.$invalid">Save product</button>
+    <button class="btn" type="submit" :disabled="$v.$invalid">Save product</button>
     <span class="lozenge" v-if="$v.$invalid">Error - all fields are required</span>
   </form>
 </template>
 
 <script>
   import {required, numeric} from 'vuelidate/lib/validators';
-  import { getProductById } from '../productService';
+  import { getProductById, updateProduct } from '../productService';
 
   export default {
     props: {
@@ -99,6 +104,7 @@
       return {
         isError: false,
         isLoading: true,
+        saveError: false,
         name: "",
         description: "",
         photo: "",
@@ -134,6 +140,23 @@
             this.price = p.price || 0;
           })
           .catch(() => this.isError = true)
+          .then(() => this.isLoading = false);
+      },
+      saveProduct() {
+        this.isLoading = true;
+        updateProduct({
+          id: this.id,
+          name: this.name,
+          description: this.description,
+          photo: this.photo,
+          color: this.color,
+          materials: this.materials,
+          department: this.department,
+          inStock: this.inStock,
+          price: this.price
+        })
+          .then(() => this.$router.push(`/product/${this.id}`))
+          .catch((e) => this.saveError = e)
           .then(() => this.isLoading = false);
       }
     },
